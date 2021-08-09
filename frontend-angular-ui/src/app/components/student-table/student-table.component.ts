@@ -39,17 +39,41 @@ const CREATE_STUDENT = gql`
     }
   }
 `;
+// const UPDATE_STUDENT = gql`
+//   mutation (
+//     $id: String!
+//     $name: String!
+//     $email: String!
+//     $dateofbirth: DateTime!
+//   ) {
+//     updateStudent(
+//       updateStudentInput: {
+//         id: $id
+//         name: $name
+//         email: $email
+//         dateofbirth: $dateofbirth
+//       }
+//     ) {
+//       age
+//       name
+//       email
+//       dateofbirth
+//       #typename
+//     }
+//   }
+// `;
+
 const UPDATE_STUDENT = gql`
   mutation (
-    $id: String!
-    $name: String!
+    $studentId: String!
+    $names: String!
     $email: String!
     $dateofbirth: DateTime!
   ) {
     updateStudent(
       updateStudentInput: {
-        id: $id
-        name: $name
+        id: $studentId
+        name: $names
         email: $email
         dateofbirth: $dateofbirth
       }
@@ -58,7 +82,6 @@ const UPDATE_STUDENT = gql`
       name
       email
       dateofbirth
-      #typename
     }
   }
 `;
@@ -71,6 +94,8 @@ export class StudentTableComponent implements OnInit {
   public gridView!: GridDataResult;
   public pageSize = 10;
   public skip = 0;
+  editedRowIndex: number = 0;
+  editRow: any;
   public opened = false;
   items: Student[] = [];
   form!: FormGroup;
@@ -105,9 +130,8 @@ export class StudentTableComponent implements OnInit {
         console.log(this.items);
       });
   }
-  public pageChange(data:any): void {
-    this.skip = data.skip;
-    this.pageSize = data.take;
+  public pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
     this.loadItems();
   }
 
@@ -207,5 +231,43 @@ export class StudentTableComponent implements OnInit {
     //  this.editedRowIndex = rowIndex;
 
     //sender.editRow(rowIndex, this.formGroup);
+  }
+
+  editHandler1(data: any) {
+    console.log('data', data);
+    this.update = true;
+    this.editRow = new FormGroup({
+      name: new FormControl(data.dataItem.name),
+      email: new FormControl(data.dataItem.email),
+      dob: new FormControl(
+        data.dataItem.dateofbirth,
+        Validators.compose([Validators.pattern('yyyy/MM/dd')])
+      ),
+    });
+    this.editedRowIndex = data.rowIndex;
+    data.sender.editRow(data.rowIndex, this.editRow);
+    console.log(this.editRow);
+  }
+
+  saveHandler(data: any) {
+    console.log(data);
+    this.apollo
+      .mutate({
+        mutation: UPDATE_STUDENT,
+        variables: {
+          studentId: data.dataItem.id,
+          names: data.formGroup.value.name,
+          email: data.formGroup.value.email,
+          dateofbirth: data.formGroup.value.dob,
+        },
+        refetchQueries: [
+          {
+            query: GET_STUDENTS,
+          },
+        ],
+      })
+      .subscribe(() => {});
+    // .subscribe()
+    data.sender.closeRow(data.rowIndex);
   }
 }

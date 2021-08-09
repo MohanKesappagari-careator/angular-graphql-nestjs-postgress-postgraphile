@@ -11,7 +11,12 @@
     STUDENT MANAGEMENT
   </h1>
   <div class="header">
-    <button class="k-button add" (click)="clearForm()" *ngIf="!opened"  (click)="open()" >
+    <button
+      class="k-button add"
+      (click)="clearForm()"
+      *ngIf="!opened"
+      (click)="open()"
+    >
       Add Student
     </button>
     <kendo-upload [saveUrl]="uploadSaveUrl" [removeUrl]="uploadRemoveUrl">
@@ -24,24 +29,33 @@
     [skip]="skip"
     [pageable]="true"
     [resizable]="true"
+    [data]="gridView"
     (pageChange)="pageChange($event)"
     [height]="450"
     (remove)="removeHandler($event)"
-    (edit)="editHandler($event)"
+    (edit)="editHandler1($event)"
+    (save)="saveHandler($event)"
   >
-    <kendo-grid-column field="name" title="name" > </kendo-grid-column>
-    <kendo-grid-column field="email" title="email"> </kendo-grid-column>
+    <kendo-grid-column field="name" title="name" editor="text">
+    </kendo-grid-column>
+    <kendo-grid-column field="email" title="email" editor="text">
+    </kendo-grid-column>
+    <kendo-grid-column
+      field="dob"
+      format="0: dd MMMM yyyy"
+      title="Date Of Birth"
+      editor="text"
+    >
+      <ng-template kendoGridCellTemplate let-dataItem>
+        {{ dataItem.dateofbirth | date }}
+      </ng-template>
+    </kendo-grid-column>
     <kendo-grid-column field="age" title="age"> </kendo-grid-column>
-    <kendo-grid-column>
+    <kendo-grid-command-column>
       <ng-template kendoGridCellTemplate let-rowIndex="rowIndex">
-        <button
-          kendoGridEditCommand
-          class="k-button update"
-          *ngIf="!opened"
-          (click)="open()"
-        >
-          Update
-        </button>
+        <button kendoGridEditCommand class="k-button update">Edit</button>
+        <button kendoButton kendoGridSaveCommand [primary]="true">Save</button>
+
         <button class="k-button delete" kendoGridRemoveCommand>Delete</button>
         <kendo-dialog
           title="Please confirm"
@@ -102,6 +116,6 @@
           </form>
         </kendo-dialog>
       </ng-template>
-    </kendo-grid-column>
+    </kendo-grid-command-column>
   </kendo-grid>
 </div>
