@@ -2,8 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { CreateExcelUploadInput } from './dto/create-excel-upload.input';
 import { UpdateExcelUploadInput } from './dto/update-excel-upload.input';
 import * as reader from 'xlsx';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 @Injectable()
 export class ExcelUploadService {
+  constructor(@InjectQueue('student') private queue: Queue) {}
   create(createExcelUploadInput: CreateExcelUploadInput) {
     return 'This action adds a new excelUpload';
   }
@@ -19,7 +22,11 @@ export class ExcelUploadService {
     }
     console.log('_______', data);
     for (let i = 0; i < data.length; i++) {
-      console.log('________', data[i].mohan);
+      this.queue.add('create', {
+        name: data[i].name,
+        email: data[i].email,
+        dateofbirth: data[i].dateofbirth,
+      });
     }
   }
 

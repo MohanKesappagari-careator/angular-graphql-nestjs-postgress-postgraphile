@@ -18,7 +18,7 @@ export class Student {
 
   @Field()
   @Column()
-  dateofbirth: Date;
+  dateofbirth: string;
 
   @Field(() => Int)
   @Column()

@@ -23,9 +23,9 @@ export class StudentService {
   //create
   async create(createStudentInput: CreateStudentInput) {
     const { name, email, dateofbirth } = createStudentInput;
-    var year = dateofbirth.getFullYear();
-    var month = dateofbirth.getMonth();
-    var day = dateofbirth.getDate();
+    var year = parseInt(dateofbirth.substring(0, 4));
+    var month = parseInt(dateofbirth.substring(5, 7));
+    var day = parseInt(dateofbirth.substring(8, 10));
     let today = new Date();
     var d = today.getFullYear();
     let age: number = d - year;
@@ -89,9 +89,9 @@ export class StudentService {
   //update
   async update(id: string, updateStudentInput: UpdateStudentInput) {
     const { name, dateofbirth, email } = updateStudentInput;
-    var year = dateofbirth.getFullYear();
-    var month = dateofbirth.getMonth();
-    var day = dateofbirth.getDate();
+    var year = parseInt(dateofbirth.substring(0, 4));
+    var month = parseInt(dateofbirth.substring(5, 7));
+    var day = parseInt(dateofbirth.substring(8, 10));
     let today = new Date();
     var d = today.getFullYear();
     let age: number = d - year;

@@ -12,5 +12,5 @@ export class CreateStudentInput {
   email: string;
 
   @Field()
-  dateofbirth: Date;
+  dateofbirth: string;
 }
