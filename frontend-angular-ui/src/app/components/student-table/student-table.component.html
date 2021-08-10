@@ -19,7 +19,7 @@
     >
       Add Student
     </button>
-    <kendo-upload [saveUrl]="uploadSaveUrl" [removeUrl]="uploadRemoveUrl">
+    <kendo-upload [autoUpload]="false" (upload)="onUpload($event)">
     </kendo-upload>
   </div>
 

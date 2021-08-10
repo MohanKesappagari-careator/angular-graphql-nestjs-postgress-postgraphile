@@ -21,13 +21,14 @@ export class ExcelUploadService {
       });
     }
     console.log('_______', data);
-    for (let i = 0; i < data.length; i++) {
+
+    data.map((value) => {
       this.queue.add('create', {
-        name: data[i].name,
-        email: data[i].email,
-        dateofbirth: data[i].dateofbirth,
+        name: value.name,
+        email: value.email,
+        dateofbirth: value.dateofbirth,
       });
-    }
+    });
   }
 
   findAll() {

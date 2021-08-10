@@ -3,6 +3,7 @@ import { Apollo, gql } from 'apollo-angular';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Student } from 'src/app/Student';
+import { StudentService } from 'src/app/services/student.service';
 const GET_STUDENTS = gql`
   query {
     findAllStudents {
@@ -65,15 +66,15 @@ const CREATE_STUDENT = gql`
 
 const UPDATE_STUDENT = gql`
   mutation (
-    $studentId: String!
-    $names: String!
+    $id: String!
+    $name: String!
     $email: String!
-    $dateofbirth: DateTime!
+    $dateofbirth: String!
   ) {
     updateStudent(
       updateStudentInput: {
-        id: $studentId
-        name: $names
+        id: $id
+        name: $name
         email: $email
         dateofbirth: $dateofbirth
       }
@@ -109,7 +110,7 @@ export class StudentTableComponent implements OnInit {
   public uploadRemoveUrl = 'removeUrl';
   public uploadSaveUrl = 'saveUrl';
   update: boolean = false;
-  constructor(private apollo: Apollo) {
+  constructor(private apollo: Apollo, private studentService: StudentService) {
     this.loadItems();
     this.form = new FormGroup({
       name: new FormControl(this.userData.name, [Validators.required]),
@@ -215,23 +216,23 @@ export class StudentTableComponent implements OnInit {
   public clearForm(): void {
     this.form.reset();
   }
-  public editHandler(data: any) {
-    this.update = true;
-    let d = new Date(data.dataItem.dateofbirth.split('T')[0]);
-    this.form = new FormGroup({
-      name: new FormControl(data.dataItem.name, [Validators.required]),
-      email: new FormControl(data.dataItem.email, [Validators.required]),
-      dateofbirth: new FormControl(d, [Validators.required]),
-    });
-    this.id = data.dataItem.id;
-    console.log(d);
+  // public editHandler(data: any) {
+  //   this.update = true;
+  //   let d = new Date(data.dataItem.dateofbirth.split('T')[0]);
+  //   this.form = new FormGroup({
+  //     name: new FormControl(data.dataItem.name, [Validators.required]),
+  //     email: new FormControl(data.dataItem.email, [Validators.required]),
+  //     dateofbirth: new FormControl(d, [Validators.required]),
+  //   });
+  //   this.id = data.dataItem.id;
+  //   console.log(d);
 
-    //    this.form = createFormGroup(dataItem);
+  //      this.form = createFormGroup(dataItem);
 
-    //  this.editedRowIndex = rowIndex;
+  //    this.editedRowIndex = rowIndex;
 
-    //sender.editRow(rowIndex, this.formGroup);
-  }
+  //   sender.editRow(rowIndex, this.formGroup);
+  // }
 
   editHandler1(data: any) {
     console.log('data', data);
@@ -239,7 +240,7 @@ export class StudentTableComponent implements OnInit {
     this.editRow = new FormGroup({
       name: new FormControl(data.dataItem.name),
       email: new FormControl(data.dataItem.email),
-      dob: new FormControl(
+      dateofbirth: new FormControl(
         data.dataItem.dateofbirth,
         Validators.compose([Validators.pattern('yyyy/MM/dd')])
       ),
@@ -255,19 +256,49 @@ export class StudentTableComponent implements OnInit {
       .mutate({
         mutation: UPDATE_STUDENT,
         variables: {
-          studentId: data.dataItem.id,
-          names: data.formGroup.value.name,
+          id: data.dataItem.id,
+          name: data.formGroup.value.name,
           email: data.formGroup.value.email,
-          dateofbirth: data.formGroup.value.dob,
+          dateofbirth: data.formGroup.value.dateofbirth,
         },
-        refetchQueries: [
-          {
-            query: GET_STUDENTS,
-          },
-        ],
       })
-      .subscribe(() => {});
+      .subscribe(() => {
+        this.fetchData();
+      });
     // .subscribe()
     data.sender.closeRow(data.rowIndex);
+  }
+  async fetchData() {
+    const query = await this.apollo.watchQuery<any>({
+      query: gql`
+        query {
+          findAllStudents {
+            id
+            name
+            age
+            email
+            dateofbirth
+          }
+        }
+      `,
+      fetchPolicy: 'network-only',
+    });
+
+    await query.valueChanges.subscribe(({ data }) => {
+      this.items = data.student;
+      this.loadItems();
+    });
+  }
+
+  public onUpload(event: any) {
+    event.preventDefault();
+    const file = event.files[0].rawFile;
+    console.log('f____', file);
+
+    const query = this.studentService.uploadFile(file);
+
+    query.then(() => {
+      this.fetchData();
+    });
   }
 }
