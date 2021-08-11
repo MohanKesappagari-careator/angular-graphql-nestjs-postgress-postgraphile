@@ -17,14 +17,16 @@ import { LabelModule } from '@progress/kendo-angular-label';
 import { LayoutModule } from '@progress/kendo-angular-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UploadsModule, UploadModule } from '@progress/kendo-angular-upload';
-import {  HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { UploadInterceptor } from './app.component';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { NotificationModule } from '@progress/kendo-angular-notification';
+import { ExtraComponent } from './components/extra/extra.component';
+import { EditorModule } from '@progress/kendo-angular-editor';
 
 
 @NgModule({
-  declarations: [AppComponent, StudentTableComponent],
+  declarations: [AppComponent, StudentTableComponent, ExtraComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -45,6 +47,7 @@ import { NotificationModule } from '@progress/kendo-angular-notification';
     UploadModule,
     DateInputsModule,
     NotificationModule,
+    EditorModule,
   ],
   providers: [
     {

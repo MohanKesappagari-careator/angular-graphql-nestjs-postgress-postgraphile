@@ -1,0 +1,79 @@
+<div class="example-wrapper" style="min-height: 400px" display="flex">
+  <div class="col-xs-12 col-sm-6 example-col">
+    <p>AutoComplete</p>
+    <kendo-autocomplete
+      [data]="listItems"
+      [placeholder]="'Your favorite sport'"
+    >
+    </kendo-autocomplete>
+  </div>
+
+  <div class="col-xs-12 col-sm-6 example-col">
+    <p>ComboBox</p>
+    <kendo-combobox [data]="listItems" [value]="'Basketball'"> </kendo-combobox>
+  </div>
+
+  <div class="col-xs-12 col-sm-6 example-col">
+    <p>DropDownList</p>
+    <kendo-dropdownlist [data]="listItems" [value]="'Basketball'">
+    </kendo-dropdownlist>
+  </div>
+
+  <div class="col-xs-12 col-sm-6 example-col">
+    <p>DropDownTree</p>
+    <kendo-dropdowntree
+      kendoDropDownTreeExpandable
+      [kendoDropDownTreeHierarchyBinding]="treeItems"
+      textField="text"
+      valueField="id"
+      childrenField="items"
+      [value]="complexValue"
+      [popupSettings]="{
+        width: '230px'
+      }"
+      [expandedKeys]="['1']"
+    ></kendo-dropdowntree>
+  </div>
+
+  <div class="col-xs-12 col-sm-6 example-col">
+    <p>MultiColumnComboBox</p>
+    <kendo-multicolumncombobox
+      [data]="gridData"
+      [textField]="'name'"
+      [valueField]="'id'"
+      [placeholder]="'Select an employee'"
+    >
+      <kendo-combobox-column [field]="'name'" [title]="'Name'" [width]="200">
+      </kendo-combobox-column>
+      <kendo-combobox-column [field]="'title'" [title]="'Title'" [width]="200">
+      </kendo-combobox-column>
+      <kendo-combobox-column [field]="'phone'" [title]="'Phone'" [width]="200">
+      </kendo-combobox-column>
+    </kendo-multicolumncombobox>
+  </div>
+
+  <div class="col-xs-12 col-sm-6 example-col">
+    <p>MultiSelect</p>
+    <kendo-multiselect
+      [data]="listItems"
+      [value]="value"
+      [placeholder]="'Your favorite sports'"
+    ></kendo-multiselect>
+  </div>
+
+  <div class="col-xs-12 col-sm-6 example-col">
+    <p>MultiSelectTree</p>
+    <kendo-multiselecttree
+      kendoMultiSelectTreeExpandable
+      [kendoMultiSelectTreeHierarchyBinding]="treeItems"
+      [textField]="'text'"
+      [valueField]="'id'"
+      [childrenField]="'items'"
+      [expandedKeys]="['0']"
+      [(value)]="complexArrayValue"
+    >
+    </kendo-multiselecttree>
+  </div>
+</div>
+
+<kendo-editor style="height: 250px"> </kendo-editor>

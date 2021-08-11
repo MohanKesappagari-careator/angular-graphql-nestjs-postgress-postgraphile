@@ -1,17 +1,35 @@
-FROM node:14 AS builder
-WORKDIR /app
-COPY ./package.json ./
-RUN npm install 
-COPY . .
-RUN npm run build
-RUN rm -rf ./node_modules
-RUN npm install --only=production
+# Specify Node Version and Image
+# Name Image development (can be anything)
+FROM node:14 AS development
 
-# Second Stage : Setup command to run your app using lightweight node image
-FROM node:14-alpine
-WORKDIR /app
-COPY --from=builder /app ./
-COPY ormconfig.docker.json ./ormconfig.json
+# Specify Working directory inside container
+WORKDIR /mohank/src/app
+
+# Copy package-lock.json & package.json from host to inside container working directory
+COPY package*.json ./
+
+# Install deps inside container
+RUN npm install
+
+RUN npm run build
 
 EXPOSE 8000
-CMD ["npm", "run", "start:prod"]
+
+################
+## PRODUCTION ##
+################
+# Build another image named production
+FROM node:14 AS production
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+# Set work dir
+WORKDIR /thomas/src/app
+
+COPY --from=development /mohank/src/app/ .
+
+EXPOSE 8000
+
+# run app
+CMD [ "node", "dist/main"]

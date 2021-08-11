@@ -1,0 +1,81 @@
+version: "3.8"
+
+services:
+  backend-graphql-api-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./backend-graphql-api-service
+      # Only build development stage from Dockerfile
+      target: development
+    # Mount our host dir to the docker container
+    # Mount api directory (./api) to (:) docker container (/thomas/src/app)
+    # Reflect File changes from host to container
+    volumes:
+      - ./backend-graphql-api-service:/mohank/src/app
+      - /mohank/src/app/node_modules/
+    # RUN in debug mode: npm run start:debug --> Also start your vscode debugger
+    # Run in dev mode: npm run start:dev
+    command: npm run start:dev
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_URL: postgres://postgres:javascript@postgres:5432/student
+      NODE_ENV: development
+      PORT: 8000
+      REDIS_URL: redis://redis:6379
+    ports:
+      - 8000:8000
+  backend-bulljs:
+    build:
+      dockerfile: Dockerfile
+      context: ./backend-bulljs
+      # Only build development stage from Dockerfile
+      target: development
+    # Mount our host dir to the docker container
+    # Mount api directory (./api) to (:) docker container (/thomas/src/app)
+    # Reflect File changes from host to container
+    volumes:
+      - ./backend-bulljs:/mohank/src/app
+      - /mohank/src/app/node_modules/
+    # RUN in debug mode: npm run start:debug --> Also start your vscode debugger
+    # Run in dev mode: npm run start:dev
+    command: npm run start:dev
+    depends_on:
+      - redis
+    environment:
+      NODE_ENV: development
+      PORT: 4001
+      REDIS_URL: redis://localhost:6379
+    ports:
+      - 4001:4001
+
+  postgres:
+    image: postgres:10.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: javascript
+      POSTGRES_DB: student
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+        # copy the sql script to create tables
+      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+
+  redis:
+    image: redis
+    container_name: redis_container_1
+    environment:
+      - ALLOW_EMPTY_PASSWORD-yes
+    ports:
+      - 6379:6379
+
+  redis-commander:
+    container_name: redis_commander_container_1
+    image: rediscommander/redis-commander
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"

@@ -7,9 +7,7 @@ import { Queue } from 'bull';
 @Injectable()
 export class ExcelUploadService {
   constructor(@InjectQueue('student') private queue: Queue) {}
-  create(createExcelUploadInput: CreateExcelUploadInput) {
-    return 'This action adds a new excelUpload';
-  }
+
   read(filename: string) {
     const file = reader.readFile(`./uploads/${filename}`);
     const sheets = file.SheetNames;
@@ -21,7 +19,6 @@ export class ExcelUploadService {
       });
     }
     console.log('_______', data);
-
     data.map((value) => {
       this.queue.add('create', {
         name: value.name,
@@ -33,17 +30,5 @@ export class ExcelUploadService {
 
   findAll() {
     return `This action returns all excelUpload`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} excelUpload`;
-  }
-
-  update(id: number, updateExcelUploadInput: UpdateExcelUploadInput) {
-    return `This action updates a #${id} excelUpload`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} excelUpload`;
   }
 }

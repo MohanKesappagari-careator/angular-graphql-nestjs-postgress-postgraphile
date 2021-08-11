@@ -10,6 +10,7 @@ import { BullModule } from '@nestjs/bull';
     BullModule.registerQueue({
       name: 'student',
       redis: {
+        host: 'redis',
         port: 6379,
       },
     }),

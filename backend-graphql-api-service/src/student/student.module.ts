@@ -12,6 +12,7 @@ import { StudentConsumer } from './student.consumer';
     BullModule.registerQueue({
       name: 'student',
       redis: {
+        host: 'redis',
         port: 6379,
       },
     }),
