@@ -4,6 +4,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Student } from 'src/app/Student';
 import { StudentService } from 'src/app/services/student.service';
+import { Observable } from 'rxjs';
 const GET_STUDENTS = gql`
   query {
     findAllStudents {
@@ -24,7 +25,7 @@ const DELETE = gql`
 `;
 
 const CREATE_STUDENT = gql`
-  mutation ($name: String!, $email: String!, $dateofbirth: DateTime!) {
+  mutation ($name: String!, $email: String!, $dateofbirth: String!) {
     createStudent(
       createStudentInput: {
         name: $name
@@ -105,6 +106,7 @@ export class StudentTableComponent implements OnInit {
     email: '',
     dateofbirth: '',
   };
+
   id!: string;
   age!: number;
   public uploadRemoveUrl = 'removeUrl';
@@ -164,53 +166,27 @@ export class StudentTableComponent implements OnInit {
 
   public submitForm(): void {
     console.log(this.form.value.dateofbirth);
-    if (this.update) {
-      this.apollo
-        .mutate({
-          mutation: UPDATE_STUDENT,
-          variables: {
-            id: this.id,
-            name: this.form.value.name,
-            email: this.form.value.email,
-            dateofbirth: this.form.value.dateofbirth,
-          },
-        })
-        .subscribe((data: any) => {
-          let index = this.items.findIndex((data) => data.id === this.id);
-          let up = {
-            ...this.items[index],
-            age: data.data.updateStudent.age,
-            name: data.data.updateStudent.name,
-            email: data.data.updateStudent.email,
-            dateofbirth: data.data.updateStudent.dateofbirth,
-            id: this.id,
-          };
-          this.items = [
-            ...this.items.slice(0, index),
-            up,
-            ...this.items.slice(index + 1),
-          ];
+    let d = this.form.value.dateofbirth;
+    let year = d.getFullYear();
+    let month = d.getMonth();
+    let date = d.getDate();
+    let birth = `${year}/${month}/${date}`;
+    console.log(JSON.stringify(birth));
 
-          console.log('i___', index);
-        });
-
-      this.close();
-    } else {
-      this.apollo
-        .mutate({
-          mutation: CREATE_STUDENT,
-          variables: {
-            name: this.form.value.name,
-            email: this.form.value.email,
-            dateofbirth: this.form.value.dateofbirth,
-          },
-        })
-        .subscribe((data: any) => {
-          this.items = [...this.items, data.data.createStudent];
-          console.log('------A', this.items);
-        });
-      this.close();
-    }
+    this.apollo
+      .mutate({
+        mutation: CREATE_STUDENT,
+        variables: {
+          name: this.form.value.name,
+          email: this.form.value.email,
+          dateofbirth: birth,
+        },
+      })
+      .subscribe((data: any) => {
+        this.items = [...this.items, data.data.createStudent];
+        console.log('------A', this.items);
+      });
+    this.close();
   }
 
   public clearForm(): void {
@@ -290,15 +266,23 @@ export class StudentTableComponent implements OnInit {
     });
   }
 
-  public onUpload(event: any) {
+  async onUpload(event: any) {
     event.preventDefault();
     const file = event.files[0].rawFile;
     console.log('f____', file);
 
-    const query = this.studentService.uploadFile(file);
+    await this.studentService
+      .uploadFile(file)
+      .then((data) => {
+        console.log(data);
+        setTimeout(() => {
+          this.fetchData();
+        }, 1000);
+      })
+      .catch((e) => console.log(e));
 
-    query.then(() => {
-      this.fetchData();
-    });
+    // query.then(() => {
+    //   this.fetchData();
+    // });
   }
 }
