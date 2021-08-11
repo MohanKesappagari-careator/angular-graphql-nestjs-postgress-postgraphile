@@ -5,6 +5,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Student } from 'src/app/Student';
 import { StudentService } from 'src/app/services/student.service';
 import { Observable } from 'rxjs';
+import * as SC from 'socketcluster-client';
+import { NotificationService } from '@progress/kendo-angular-notification';
+
+let socket = SC.create({
+  hostname: 'localhost',
+  port: 8002,
+});
+
 const GET_STUDENTS = gql`
   query {
     findAllStudents {
@@ -41,29 +49,6 @@ const CREATE_STUDENT = gql`
     }
   }
 `;
-// const UPDATE_STUDENT = gql`
-//   mutation (
-//     $id: String!
-//     $name: String!
-//     $email: String!
-//     $dateofbirth: DateTime!
-//   ) {
-//     updateStudent(
-//       updateStudentInput: {
-//         id: $id
-//         name: $name
-//         email: $email
-//         dateofbirth: $dateofbirth
-//       }
-//     ) {
-//       age
-//       name
-//       email
-//       dateofbirth
-//       #typename
-//     }
-//   }
-// `;
 
 const UPDATE_STUDENT = gql`
   mutation (
@@ -112,7 +97,11 @@ export class StudentTableComponent implements OnInit {
   public uploadRemoveUrl = 'removeUrl';
   public uploadSaveUrl = 'saveUrl';
   update: boolean = false;
-  constructor(private apollo: Apollo, private studentService: StudentService) {
+  constructor(
+    private apollo: Apollo,
+    private studentService: StudentService,
+    private notificationService: NotificationService
+  ) {
     this.loadItems();
     this.form = new FormGroup({
       name: new FormControl(this.userData.name, [Validators.required]),
@@ -280,7 +269,20 @@ export class StudentTableComponent implements OnInit {
         }, 1000);
       })
       .catch((e) => console.log(e));
-
+    (async () => {
+      let channel = socket.subscribe('student');
+      for await (let data of channel) {
+        if (data) {
+          this.notificationService.show({
+            content: `Uploaded entry`,
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 900 },
+            type: { style: 'success', icon: true },
+          });
+        }
+      }
+    })();
     // query.then(() => {
     //   this.fetchData();
     // });

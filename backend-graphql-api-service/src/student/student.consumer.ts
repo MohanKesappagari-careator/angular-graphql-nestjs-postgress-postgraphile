@@ -1,10 +1,21 @@
-import { Process, Processor } from '@nestjs/bull';
+import {
+  OnQueueCompleted,
+  OnQueueFailed,
+  Process,
+  Processor,
+} from '@nestjs/bull';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from 'bull';
 import { StudentD } from 'src/Student';
 import { Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
+import * as SC from 'socketcluster-client';
+import { Logger } from '@nestjs/common';
 
+let socket = SC.create({
+  hostname: 'localhost',
+  port: 8002,
+});
 @Processor('student')
 export class StudentConsumer {
   constructor(
@@ -36,5 +47,31 @@ export class StudentConsumer {
     };
 
     return await this.studentRepository.save(createStudentInput);
+  }
+  @OnQueueCompleted()
+  completed(job: Job, result: any) {
+    (async () => {
+      try {
+        await socket.invokePublish(
+          'student',
+          `Completed job with result ${result}`,
+        );
+      } catch (error) {
+        Logger.log(error);
+      }
+    })();
+    Logger.log(`Completed job with result ${result}`);
+  }
+
+  @OnQueueFailed()
+  failed(job: Job, err: Error) {
+    (async () => {
+      try {
+        await socket.invokePublish('myChannel', `Failed job with error ${err}`);
+      } catch (error) {
+        Logger.log(error);
+      }
+    })();
+    Logger.log(`Failed job with error ${err}...`);
   }
 }
