@@ -67,7 +67,7 @@ export class StudentConsumer {
   failed(job: Job, err: Error) {
     (async () => {
       try {
-        await socket.invokePublish('myChannel', `Failed job with error ${err}`);
+        await socket.invokePublish('studentF', `Failed job with error ${err}`);
       } catch (error) {
         Logger.log(error);
       }

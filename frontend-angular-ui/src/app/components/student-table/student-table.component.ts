@@ -250,7 +250,7 @@ export class StudentTableComponent implements OnInit {
     });
 
     await query.valueChanges.subscribe(({ data }) => {
-      this.items = data.student;
+      this.items = data.findAllStudents;
       this.loadItems();
     });
   }
@@ -283,6 +283,21 @@ export class StudentTableComponent implements OnInit {
         }
       }
     })();
+    (async () => {
+      let channel = socket.subscribe('studentF');
+      for await (let data of channel) {
+        if (data) {
+          this.notificationService.show({
+            content: `Uploaded Rejected`,
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 900 },
+            type: { style: 'error', icon: true },
+          });
+        }
+      }
+    })();
+
     // query.then(() => {
     //   this.fetchData();
     // });
