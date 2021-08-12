@@ -22,10 +22,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               {
                 "input": "node_modules/@progress/kendo-theme-default/dist/all.css"
@@ -39,8 +36,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "5mb",
+                  "maximumError": "7mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -74,7 +71,8 @@
               "browserTarget": "frontend-angular-ui:build:production"
             },
             "development": {
-              "browserTarget": "frontend-angular-ui:build:development"
+              "browserTarget": "frontend-angular-ui:build:development",
+              "proxyConfig": "src/proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
@@ -92,10 +90,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               {
                 "input": "node_modules/@progress/kendo-theme-default/dist/all.css"

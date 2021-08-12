@@ -64,6 +64,7 @@ export class StudentResolver {
   removeStudent(@Args('id') id: string) {
     return this.studentService.remove(id);
   }
+
   @Subscription(() => Student, { name: 'create' })
   create() {
     return this.pubsub.asyncIterator('create');

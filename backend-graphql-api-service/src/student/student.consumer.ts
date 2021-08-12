@@ -13,7 +13,7 @@ import * as SC from 'socketcluster-client';
 import { Logger } from '@nestjs/common';
 
 let socket = SC.create({
-  hostname: 'localhost',
+  hostname: 'socket',
   port: 8002,
 });
 @Processor('student')

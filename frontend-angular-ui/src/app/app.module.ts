@@ -24,7 +24,6 @@ import { NotificationModule } from '@progress/kendo-angular-notification';
 import { ExtraComponent } from './components/extra/extra.component';
 import { EditorModule } from '@progress/kendo-angular-editor';
 
-
 @NgModule({
   declarations: [AppComponent, StudentTableComponent, ExtraComponent],
   imports: [

@@ -1,7 +1,7 @@
 # Stage 1: build
 FROM node:14 AS development
 
-WORKDIR /thomas/frontend/src/app
+WORKDIR /mohank/frontend/src/app
 
 COPY package*.json ./
 

@@ -49,6 +49,20 @@ services:
       REDIS_URL: redis://localhost:6379
     ports:
       - 4001:4001
+  frontend-angular-ui:
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend-angular-ui
+      target: development
+    command: npm run start
+    volumes:
+      - ./frontend-angular-ui:/mohank/frontend/src/app
+      - /mohank/frontend/src/app/node_modules
+    ports:
+      - 4200:4200
+    links:
+      - backend-graphql-api-service
+      - backend-bulljs
 
   postgres:
     image: postgres:10.4
@@ -79,3 +93,15 @@ services:
       - REDIS_HOSTS=local:redis:6379
     ports:
       - "8081:8081"
+  socket:
+    build:
+      dockerfile: Dockerfile
+      context: ./socketCluster
+    volumes:
+      - ./socketCluster:/usr/src/
+      - /usr/srcnode_modules/
+    restart: always
+    environment:
+      PORT: 8002
+    ports:
+      - 8002:8002

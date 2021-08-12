@@ -7,7 +7,7 @@ const UPLOADFILE = gql`
     uploadFile(file: $file)
   }
 `;
-const endpoint = 'http://localhost:4001/graphql';
+const endpoint = 'backend-bulljs';
 const graphQLClient = new GraphQLClient(endpoint, {
   credentials: 'include',
   mode: 'cors',
