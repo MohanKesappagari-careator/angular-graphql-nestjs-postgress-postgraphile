@@ -272,7 +272,7 @@ export class StudentTableComponent implements OnInit {
         console.log(data);
         setTimeout(() => {
           this.fetchData();
-        }, 1000);
+        }, 800);
       })
       .catch((e) => console.log(e));
     (async () => {
@@ -280,7 +280,7 @@ export class StudentTableComponent implements OnInit {
       for await (let data of channel) {
         if (data) {
           this.notificationService.show({
-            content: `Uploaded entry`,
+            content: `Job Succesfull`,
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 900 },
@@ -294,7 +294,7 @@ export class StudentTableComponent implements OnInit {
       for await (let data of channel) {
         if (data) {
           this.notificationService.show({
-            content: `Uploaded Rejected`,
+            content: `Job Fail`,
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 900 },
