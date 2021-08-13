@@ -72,10 +72,6 @@ services:
       POSTGRES_DB: student
     ports:
       - 5432:5432
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
-        # copy the sql script to create tables
-      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
 
   redis:
     image: redis
@@ -105,3 +101,13 @@ services:
       PORT: 8002
     ports:
       - 8002:8002
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    depends_on: 
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - 5050:80

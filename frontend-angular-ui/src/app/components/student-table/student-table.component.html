@@ -41,10 +41,10 @@
     <kendo-grid-column field="email" title="email" editor="text">
     </kendo-grid-column>
     <kendo-grid-column
-      field="dob"
-      format="0: dd MMMM yyyy"
+      field="dateofbirth"
+      format="yyyy/MM/dd"
       title="Date Of Birth"
-      editor="text"
+      editor="date"
     >
       <ng-template kendoGridCellTemplate let-dataItem>
         {{ dataItem.dateofbirth | date }}

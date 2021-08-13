@@ -206,7 +206,7 @@ export class StudentTableComponent implements OnInit {
       name: new FormControl(data.dataItem.name),
       email: new FormControl(data.dataItem.email),
       dateofbirth: new FormControl(
-        data.dataItem.dateofbirth,
+        new Date(data.dataItem.dateofbirth),
         Validators.compose([Validators.pattern('yyyy/MM/dd')])
       ),
     });
@@ -216,6 +216,12 @@ export class StudentTableComponent implements OnInit {
   }
 
   saveHandler(data: any) {
+    let d = data.formGroup.value.dateofbirth;
+    let year = d.getFullYear();
+    let month = d.getMonth();
+    let date = d.getDate();
+    let birth = `${year}/${month}/${date}`;
+    console.log(JSON.stringify(birth));
     console.log(data);
     this.apollo
       .mutate({
@@ -224,7 +230,7 @@ export class StudentTableComponent implements OnInit {
           id: data.dataItem.id,
           name: data.formGroup.value.name,
           email: data.formGroup.value.email,
-          dateofbirth: data.formGroup.value.dateofbirth,
+          dateofbirth: birth,
         },
       })
       .subscribe(() => {
