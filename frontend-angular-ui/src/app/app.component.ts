@@ -16,7 +16,9 @@ import { delay } from 'rxjs/operators';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'frontend-angular-ui';
+}
 @Injectable()
 export class UploadInterceptor implements HttpInterceptor {
   intercept(

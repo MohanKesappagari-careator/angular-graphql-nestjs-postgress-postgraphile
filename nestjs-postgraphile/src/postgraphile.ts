@@ -3,7 +3,7 @@ const { DATABASE, PG_USER, PASSWORD, HOST, PG_PORT } = process.env;
 
 export const postgraph = postgraphile(
   {
-    database: 'student',
+    database: 'example',
     user: 'postgres',
     password: 'javascript',
     host: 'localhost',
