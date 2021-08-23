@@ -4,19 +4,29 @@
     <kendo-autocomplete
       [data]="listItems"
       [placeholder]="'Your favorite sport'"
+      [(ngModel)]="se"
     >
     </kendo-autocomplete>
   </div>
-
+  <p>
+    You Selected<span style="color: blue">{{ se }}</span>
+  </p>
   <div class="col-xs-12 col-sm-6 example-col">
     <p>ComboBox</p>
-    <kendo-combobox [data]="listItems" [value]="'Basketball'"> </kendo-combobox>
+    <kendo-combobox [data]="listItems" [value]="'Basketball'" [(ngModel)]="d2">
+    </kendo-combobox>
+    <p style="color: chocolate">{{ d2 }}</p>
   </div>
 
   <div class="col-xs-12 col-sm-6 example-col">
     <p>DropDownList</p>
-    <kendo-dropdownlist [data]="listItems" [value]="'Basketball'">
+    <kendo-dropdownlist
+      [data]="listItems"
+      [value]="'Basketball'"
+      [(ngModel)]="d1"
+    >
     </kendo-dropdownlist>
+    <p>{{ d1 }}</p>
   </div>
 
   <div class="col-xs-12 col-sm-6 example-col">
@@ -28,11 +38,13 @@
       valueField="id"
       childrenField="items"
       [value]="complexValue"
+      [(ngModel)]="drop"
       [popupSettings]="{
         width: '230px'
       }"
       [expandedKeys]="['1']"
     ></kendo-dropdowntree>
+    <p style="color: chocolate">{{ drop }}</p>
   </div>
 
   <div class="col-xs-12 col-sm-6 example-col">
@@ -42,6 +54,7 @@
       [textField]="'name'"
       [valueField]="'id'"
       [placeholder]="'Select an employee'"
+      [(ngModel)]="gridData1"
     >
       <kendo-combobox-column [field]="'name'" [title]="'Name'" [width]="200">
       </kendo-combobox-column>
@@ -50,15 +63,18 @@
       <kendo-combobox-column [field]="'phone'" [title]="'Phone'" [width]="200">
       </kendo-combobox-column>
     </kendo-multicolumncombobox>
+    <p style="color: chartreuse">{{ gridData1 }}</p>
   </div>
 
   <div class="col-xs-12 col-sm-6 example-col">
     <p>MultiSelect</p>
     <kendo-multiselect
+      [(ngModel)]="multiselect"
       [data]="listItems"
       [value]="value"
       [placeholder]="'Your favorite sports'"
     ></kendo-multiselect>
+    <p style="color: blueviolet">{{ multiselect }}</p>
   </div>
 
   <div class="col-xs-12 col-sm-6 example-col">

@@ -14,18 +14,38 @@ export class ExcelUploadService {
     let data = [];
     for (let i = 0; i < sheets.length; i++) {
       const temp = reader.utils.sheet_to_json(file.Sheets[file.SheetNames[i]]);
-      temp.forEach((res) => {
-        data.push(res);
+      temp.forEach((res: any) => {
+        var year = parseInt(res.dateofbirth.substring(0, 4));
+        var month = parseInt(res.dateofbirth.substring(5, 7));
+        var day = parseInt(res.dateofbirth.substring(8, 10));
+        let today = new Date();
+        //let dateof = new Date(job.data.dateofbirth).toISOString();
+        var d = today.getFullYear();
+        let age: number = d - year;
+        if (
+          today.getMonth() < month ||
+          (today.getMonth() == month && today.getDate() < day)
+        ) {
+          age--;
+        }
+        console.log('job____', age);
+        data.push({
+          name: res.name,
+          email: res.email,
+          dateofbirth: res.dateofbirth,
+          age: age,
+        });
       });
     }
     console.log('_______', data);
-    data.map((value) => {
-      this.queue.add('create', {
-        name: value.name,
-        email: value.email,
-        dateofbirth: value.dateofbirth,
-      });
-    });
+    this.queue.add('create', data);
+    // data.map((value) => {
+    //   this.queue.add('create', {
+    //     name: value.name,
+    //     email: value.email,
+    //     dateofbirth: value.dateofbirth,
+    //   });
+    // });
   }
 
   findAll() {

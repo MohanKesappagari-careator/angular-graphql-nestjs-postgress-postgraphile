@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from '@apollo/client/utilities';
 import { gql } from 'apollo-angular';
 import { GraphQLClient, request } from 'graphql-request';
 

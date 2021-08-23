@@ -57,65 +57,63 @@
         <button kendoButton kendoGridSaveCommand [primary]="true">Save</button>
 
         <button class="k-button delete" kendoGridRemoveCommand>Delete</button>
-        <kendo-dialog
-          title="Please confirm"
-          *ngIf="opened"
-          (close)="close()"
-          [minWidth]="250"
-          [width]="450"
-        >
-          <form class="k-form" [formGroup]="form">
-            <kendo-formfield showErrors="initial">
-              <kendo-label [for]="name" text="name"></kendo-label>
-              <kendo-textbox
-                formControlName="name"
-                placeholder="name"
-                [clearButton]="true"
-                #name
-                required
-              ></kendo-textbox>
-              <kendo-formerror>Error:Name is required</kendo-formerror>
-            </kendo-formfield>
-            <kendo-formfield showErrors="initial">
-              <kendo-label [for]="email" text="email"></kendo-label>
-              <kendo-textbox
-                formControlName="email"
-                [clearButton]="true"
-                placeholder="example@gmail.com"
-                #email
-                required
-              ></kendo-textbox>
-              <kendo-formerror>Error: email is required</kendo-formerror>
-            </kendo-formfield>
-            <kendo-formfield showErrors="initial">
-              <kendo-label [for]="dateofbirth" text="dateofbirth"></kendo-label>
-              <kendo-datepicker
-                formControlName="dateofbirth"
-                format="yyyy MMMM dd"
-                placeholder="YYYY-MM-DD"
-                #dateofbirth
-                required
-              ></kendo-datepicker>
-
-              <kendo-formerror
-                >Error: Date Of Birth is required</kendo-formerror
-              >
-            </kendo-formfield>
-            <kendo-dialog-actions class="k-form-buttons">
-              <button kendoButton k-button (click)="clearForm()">Clear</button>
-              <button
-                kendoButton
-                k-button
-                (click)="submitForm()"
-                (click)="clearForm()"
-                [primary]="true"
-              >
-                Submit
-              </button>
-            </kendo-dialog-actions>
-          </form>
-        </kendo-dialog>
       </ng-template>
     </kendo-grid-command-column>
   </kendo-grid>
+  <kendo-dialog
+    title="Please confirm"
+    *ngIf="opened"
+    (close)="close()"
+    [minWidth]="250"
+    [width]="450"
+  >
+    <form class="k-form" [formGroup]="form">
+      <kendo-formfield showErrors="initial">
+        <kendo-label [for]="name" text="name"></kendo-label>
+        <kendo-textbox
+          formControlName="name"
+          placeholder="name"
+          [clearButton]="true"
+          #name
+          required
+        ></kendo-textbox>
+        <kendo-formerror>Error:Name is required</kendo-formerror>
+      </kendo-formfield>
+      <kendo-formfield showErrors="initial">
+        <kendo-label [for]="email" text="email"></kendo-label>
+        <kendo-textbox
+          formControlName="email"
+          [clearButton]="true"
+          placeholder="example@gmail.com"
+          #email
+          required
+        ></kendo-textbox>
+        <kendo-formerror>Error: email is required</kendo-formerror>
+      </kendo-formfield>
+      <kendo-formfield showErrors="initial">
+        <kendo-label [for]="dateofbirth" text="dateofbirth"></kendo-label>
+        <kendo-datepicker
+          formControlName="dateofbirth"
+          format="yyyy MMMM dd"
+          placeholder="YYYY-MM-DD"
+          #dateofbirth
+          required
+        ></kendo-datepicker>
+
+        <kendo-formerror>Error: Date Of Birth is required</kendo-formerror>
+      </kendo-formfield>
+      <kendo-dialog-actions class="k-form-buttons">
+        <button kendoButton k-button (click)="clearForm()">Clear</button>
+        <button
+          kendoButton
+          k-button
+          (click)="submitForm()"
+          (click)="clearForm()"
+          [primary]="true"
+        >
+          Submit
+        </button>
+      </kendo-dialog-actions>
+    </form>
+  </kendo-dialog>
 </div>

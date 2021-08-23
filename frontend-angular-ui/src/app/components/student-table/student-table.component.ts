@@ -14,61 +14,102 @@ let socket = SC.create({
 });
 
 const GET_STUDENTS = gql`
-  query {
-    findAllStudents {
-      id
-      name
-      email
-      dateofbirth
-      age
+  query MyQuery {
+    allStudents {
+      nodes {
+        age
+        dateofbirth
+        email
+        id
+        name
+        nodeId
+      }
     }
   }
 `;
 const DELETE = gql`
-  mutation ($studentId: String!) {
-    removeStudent(id: $studentId) {
-      __typename
+  mutation MyMutation($id: UUID!) {
+    deleteStudentById(input: { id: $id }) {
+      query {
+        allStudents {
+          nodes {
+            age
+            dateofbirth
+            email
+            id
+            name
+            nodeId
+          }
+        }
+      }
     }
   }
 `;
 
 const CREATE_STUDENT = gql`
-  mutation ($name: String!, $email: String!, $dateofbirth: String!) {
+  mutation MyMutation(
+    $name: String!
+    $email: String!
+    $dateofbirth: String!
+    $age: Int!
+  ) {
     createStudent(
-      createStudentInput: {
-        name: $name
-        email: $email
-        dateofbirth: $dateofbirth
+      input: {
+        student: {
+          name: $name
+          email: $email
+          dateofbirth: $dateofbirth
+          age: $age
+        }
       }
     ) {
-      id
-      name
-      email
-      dateofbirth
-      age
+      query {
+        allStudents {
+          nodes {
+            age
+            dateofbirth
+            email
+            id
+            name
+            nodeId
+          }
+        }
+      }
     }
   }
 `;
 
 const UPDATE_STUDENT = gql`
-  mutation (
-    $id: String!
+  mutation MyMutation(
+    $id: UUID!
     $name: String!
     $email: String!
     $dateofbirth: String!
+    $age: Int!
   ) {
-    updateStudent(
-      updateStudentInput: {
+    updateStudentById(
+      input: {
+        studentPatch: {
+          age: $age
+          dateofbirth: $dateofbirth
+          email: $email
+          name: $name
+        }
         id: $id
-        name: $name
-        email: $email
-        dateofbirth: $dateofbirth
       }
     ) {
-      age
-      name
-      email
-      dateofbirth
+      query {
+        allStudents {
+          nodes {
+            age
+            dateofbirth
+            email
+            id
+            name
+            nodeId
+          }
+        }
+      }
     }
   }
 `;
@@ -93,7 +134,6 @@ export class StudentTableComponent implements OnInit {
   };
 
   id!: string;
-  age!: number;
   public uploadRemoveUrl = 'removeUrl';
   public uploadSaveUrl = 'saveUrl';
   update: boolean = false;
@@ -118,8 +158,8 @@ export class StudentTableComponent implements OnInit {
         query: GET_STUDENTS,
       })
       .valueChanges.subscribe(({ data, loading }) => {
-        this.items = data.findAllStudents;
-        console.log(this.items);
+        this.items = data.allStudents.nodes;
+        console.log(data);
       });
   }
   public pageChange(event: PageChangeEvent): void {
@@ -145,11 +185,11 @@ export class StudentTableComponent implements OnInit {
       .mutate({
         mutation: DELETE,
         variables: {
-          studentId: id.dataItem.id,
+          id: id.dataItem.id,
         },
       })
-      .subscribe(() => {
-        this.items = this.items.filter((i) => i.id !== id.dataItem.id);
+      .subscribe((data: any) => {
+        this.items = data.data.deleteStudentById.query.allStudents.nodes;
       });
   }
 
@@ -157,9 +197,18 @@ export class StudentTableComponent implements OnInit {
     console.log(this.form.value.dateofbirth);
     let d = this.form.value.dateofbirth;
     let year = d.getFullYear();
-    let month = d.getMonth();
+    let month = d.getMonth() + 1;
     let date = d.getDate();
     let birth = `${year}/${month}/${date}`;
+    let today = new Date();
+    var tod = today.getFullYear();
+    let age: number = tod - year;
+    if (
+      today.getMonth() < month ||
+      (today.getMonth() == month && today.getDate() < date)
+    ) {
+      age--;
+    }
     console.log(JSON.stringify(birth));
 
     this.apollo
@@ -169,11 +218,11 @@ export class StudentTableComponent implements OnInit {
           name: this.form.value.name,
           email: this.form.value.email,
           dateofbirth: birth,
+          age: age,
         },
       })
       .subscribe((data: any) => {
-        this.items = [...this.items, data.data.createStudent];
-        console.log('------A', this.items);
+        this.items = data.data.createStudent.query.allStudents.nodes;
       });
     this.close();
   }
@@ -181,23 +230,6 @@ export class StudentTableComponent implements OnInit {
   public clearForm(): void {
     this.form.reset();
   }
-  // public editHandler(data: any) {
-  //   this.update = true;
-  //   let d = new Date(data.dataItem.dateofbirth.split('T')[0]);
-  //   this.form = new FormGroup({
-  //     name: new FormControl(data.dataItem.name, [Validators.required]),
-  //     email: new FormControl(data.dataItem.email, [Validators.required]),
-  //     dateofbirth: new FormControl(d, [Validators.required]),
-  //   });
-  //   this.id = data.dataItem.id;
-  //   console.log(d);
-
-  //      this.form = createFormGroup(dataItem);
-
-  //    this.editedRowIndex = rowIndex;
-
-  //   sender.editRow(rowIndex, this.formGroup);
-  // }
 
   editHandler1(data: any) {
     console.log('data', data);
@@ -216,13 +248,21 @@ export class StudentTableComponent implements OnInit {
   }
 
   saveHandler(data: any) {
+    console.log(data);
     let d = data.formGroup.value.dateofbirth;
     let year = d.getFullYear();
-    let month = d.getMonth();
+    let month = d.getMonth() + 1;
     let date = d.getDate();
     let birth = `${year}/${month}/${date}`;
-    console.log(JSON.stringify(birth));
-    console.log(data);
+    let today = new Date();
+    var tod = today.getFullYear();
+    let age: number = tod - year;
+    if (
+      today.getMonth() < month ||
+      (today.getMonth() == month && today.getDate() < date)
+    ) {
+      age--;
+    }
     this.apollo
       .mutate({
         mutation: UPDATE_STUDENT,
@@ -231,10 +271,11 @@ export class StudentTableComponent implements OnInit {
           name: data.formGroup.value.name,
           email: data.formGroup.value.email,
           dateofbirth: birth,
+          age: age,
         },
       })
-      .subscribe(() => {
-        this.fetchData();
+      .subscribe((data: any) => {
+        this.items = data.data.updateStudentById.query.allStudents.nodes;
       });
     // .subscribe()
     data.sender.closeRow(data.rowIndex);
@@ -242,13 +283,16 @@ export class StudentTableComponent implements OnInit {
   async fetchData() {
     const query = await this.apollo.watchQuery<any>({
       query: gql`
-        query {
-          findAllStudents {
-            id
-            name
-            age
-            email
-            dateofbirth
+        query MyQuery {
+          allStudents {
+            nodes {
+              age
+              dateofbirth
+              email
+              id
+              name
+              nodeId
+            }
           }
         }
       `,
@@ -256,8 +300,7 @@ export class StudentTableComponent implements OnInit {
     });
 
     await query.valueChanges.subscribe(({ data }) => {
-      this.items = data.findAllStudents;
-      this.loadItems();
+      this.items = data.allStudents.nodes;
     });
   }
 
@@ -268,24 +311,20 @@ export class StudentTableComponent implements OnInit {
 
     await this.studentService
       .uploadFile(file)
-      .then((data) => {
-        console.log(data);
-        setTimeout(() => {
-          this.fetchData();
-        }, 800);
-      })
+      .then((data) => console.log(data))
       .catch((e) => console.log(e));
     (async () => {
       let channel = socket.subscribe('student');
       for await (let data of channel) {
         if (data) {
           this.notificationService.show({
-            content: `Job Succesfull`,
+            content: `Queue Completed`,
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 900 },
             type: { style: 'success', icon: true },
           });
+          await this.fetchData();
         }
       }
     })();
@@ -294,7 +333,7 @@ export class StudentTableComponent implements OnInit {
       for await (let data of channel) {
         if (data) {
           this.notificationService.show({
-            content: `Job Fail`,
+            content: `Queue Fail`,
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 900 },
@@ -302,6 +341,21 @@ export class StudentTableComponent implements OnInit {
           });
         }
       }
+    })();
+    (async () => {
+      let channel = socket.subscribe('studentE');
+      for await (let data of channel) {
+        if (data) {
+          this.notificationService.show({
+            content: `DataBase errro`,
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 900 },
+            type: { style: 'info', icon: true },
+          });
+        }
+      }
+      await socket.unsubscribe('studentE');
     })();
 
     // query.then(() => {

@@ -4,7 +4,7 @@
   "port": 5432,
   "username": "postgres",
   "password": "javascript",
-  "database": "example",
+  "database": "student",
   "entities": ["dist/**/*.entity{.ts,.js}"],
   "synchronize": true,
   "autoLoadEntities": true,

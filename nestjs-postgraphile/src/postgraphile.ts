@@ -1,15 +1,9 @@
-import postgraphile from 'postgraphile';
+import postgraphile from "postgraphile";
 const { DATABASE, PG_USER, PASSWORD, HOST, PG_PORT } = process.env;
 
 export const postgraph = postgraphile(
-  {
-    database: 'example',
-    user: 'postgres',
-    password: 'javascript',
-    host: 'localhost',
-    port: parseInt(PG_PORT),
-  },
-  'public',
+  "postgres://postgres:javascript@postgres:5432/student",
+  "public",
   {
     watchPg: true,
     graphiql: true,

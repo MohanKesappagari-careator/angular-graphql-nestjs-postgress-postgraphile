@@ -7,6 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./extra.component.css'],
 })
 export class ExtraComponent {
+  se: string = '';
+  multiselect: string = '';
+  gridData1: string = '';
+  drop: string = '';
+  d1: string = '';
+  d2: string = '';
   constructor() {}
 
   ngOnInit(): void {}

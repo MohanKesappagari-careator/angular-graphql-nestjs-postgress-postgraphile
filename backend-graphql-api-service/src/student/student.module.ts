@@ -17,6 +17,6 @@ import { StudentConsumer } from './student.consumer';
       },
     }),
   ],
-  providers: [StudentResolver, StudentService, StudentConsumer],
+  providers: [StudentResolver, StudentService],
 })
 export class StudentModule {}
